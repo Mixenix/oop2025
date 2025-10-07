@@ -5,19 +5,17 @@ project ("CMakeLab2")
 # Включение coverage для Visual Studio
 option(ENABLE_COVERAGE "Enable code coverage" ON)
 
-if(ENABLE_COVERAGE)
-    if(MSVC)
-        message(STATUS "Building with Visual Studio code coverage")
-        # Флаги для code coverage в Visual Studio
-        add_compile_options("/DEBUG")
-        add_compile_options("/Z7")
-        add_link_options("/DEBUG")
-        string(APPEND CMAKE_EXE_LINKER_FLAGS " /PROFILE")
-    else()
-        message(STATUS "Building with GCC/Clang code coverage")
-        add_compile_options("--coverage" "-fprofile-arcs" "-ftest-coverage")
-        add_link_options("--coverage" "-fprofile-arcs")
-    endif()
+if(MSVC)
+    message(STATUS "Building with Visual Studio code coverage")
+    # Флаги для code coverage в Visual Studio
+    add_compile_options("/DEBUG")
+    add_compile_options("/Z7")
+    add_link_options("/DEBUG")
+    string(APPEND CMAKE_EXE_LINKER_FLAGS " /PROFILE")
+else()
+    message(STATUS "Building with GCC/Clang code coverage")
+    add_compile_options("--coverage" "-fprofile-arcs" "-ftest-coverage")
+    add_link_options("--coverage" "-fprofile-arcs")
 endif()
 
 # Локальная версия Catch2

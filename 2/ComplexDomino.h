@@ -29,7 +29,7 @@ private:
 
 public:
     /**
-     * @brief Constructs a new ComplexDomino object
+     * @brief Default constructor
      * @param rnd If true, creates random dominoes (default: false)
      * @param sz Number of dominoes to create (used when rnd=true)
      * @param each Number of copies for each domino combination (used when rnd=false and each>0)
@@ -66,21 +66,23 @@ public:
      * @param other ComplexDomino to move from
      * @return Reference to this object
      */
-    ComplexDomino& operator=(ComplexDomino& other) noexcept;
+    ComplexDomino& operator=(ComplexDomino&& other) noexcept;
 
     /**
      * @brief Accesses domino at specified index
      * @param index Index of domino to access
-     * @return Copy of domino at specified index
+     * @return Reference to domino at specified index
      * @throws std::out_of_range if index is invalid
      */
-    SimpleDomino operator[](int index) const;
+    SimpleDomino& operator[](int index);
 
     /**
-     * @brief Gets the current number of dominoes in the collection
-     * @return Number of dominoes
+     * @brief Accesses domino at specified index (const version)
+     * @param index Index of domino to access
+     * @return Const reference to domino at specified index
+     * @throws std::out_of_range if index is invalid
      */
-    size_t getSize() const;
+    const SimpleDomino& operator[](int index) const;
 
     /**
      * @brief Adds a domino to the collection
@@ -88,6 +90,34 @@ public:
      * @return Reference to this object
      */
     ComplexDomino& operator+=(const SimpleDomino& dom);
+
+    /**
+     * @brief Sorts dominoes by ascending sum of their values
+     * @return Reference to this object
+     */
+    ComplexDomino& operator!();
+
+    /**
+     * @brief Extracts subsequence of dominoes containing specified value
+     * @param value Value to search for in dominoes
+     * @return New ComplexDomino containing matching dominoes
+     * @note Removes extracted dominoes from the original collection
+     */
+    ComplexDomino operator()(int value) const;
+
+    /**
+     * @brief Outputs all dominoes in the collection to output stream
+     * @param os Output stream
+     * @param dom ComplexDomino to output
+     * @return Reference to output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const ComplexDomino& dom);
+
+    /**
+     * @brief Gets the current number of dominoes in the collection
+     * @return Number of dominoes
+     */
+    size_t getSize() const;
 
     /**
      * @brief Adds a random domino to the collection
@@ -121,6 +151,7 @@ public:
      * @brief Extracts subsequence of dominoes containing specified value
      * @param value Value to search for in dominoes
      * @return New ComplexDomino containing matching dominoes
+     * @note Removes extracted dominoes from the original collection
      */
     ComplexDomino subSeq(int value);
 
@@ -131,14 +162,6 @@ public:
      * @throws std::out_of_range if index is invalid
      */
     std::string ascii(int index);
-
-    /**
-     * @brief Outputs all dominoes in the collection to output stream
-     * @param os Output stream
-     * @param dom ComplexDomino to output
-     * @return Reference to output stream
-     */
-    friend std::ostream& operator<<(std::ostream& os, const ComplexDomino& dom);
 };
 
 #endif

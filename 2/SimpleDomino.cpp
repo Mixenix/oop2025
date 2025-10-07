@@ -6,165 +6,148 @@
 
 using namespace std;
 
-
 SimpleDomino::SimpleDomino(int val1, int val2, bool rnd) {
-	if (rnd == true) {
-		unsigned int seed = static_cast<unsigned int>(chrono::system_clock::now().time_since_epoch().count());
-		mt19937 generator(seed);
-		uniform_int_distribution<int> distribution(1, 6);
-		value1 = (distribution(generator));
-		value2 = (distribution(generator));
-	}
-	else {
-		value1 = val1;
-		value2 = val2;
-	}
+    if (rnd) {
+        setRandomValues();
+    }
+    else {
+        value1 = val1;
+        value2 = val2;
+    }
 }
 
 void SimpleDomino::setRandomValues() {
-	unsigned int seed = static_cast<unsigned int>(chrono::system_clock::now().time_since_epoch().count());
-	mt19937 generator(seed);
-	uniform_int_distribution<int> distribution(1, 6);
-	value1 = (distribution(generator));
-	value2 = (distribution(generator));
+    unsigned int seed = static_cast<unsigned int>(chrono::system_clock::now().time_since_epoch().count());
+    mt19937 generator(seed);
+    uniform_int_distribution<int> distribution(1, 6);
+    value1 = distribution(generator);
+    value2 = distribution(generator);
 }
 
 void SimpleDomino::operator!() {
-	unsigned int seed = static_cast<unsigned int>(chrono::system_clock::now().time_since_epoch().count());
-	mt19937 generator(seed);
-	uniform_int_distribution<int> distribution(1, 6);
-	value1 = (distribution(generator));
-	value2 = (distribution(generator));
+    setRandomValues();
 }
 
-SimpleDomino SimpleDomino::operator~() {
-	int t = value2;
-	value2 = value1;
-	value1 = t;
-	return *this;
+SimpleDomino& SimpleDomino::operator~() {
+    swap(value1, value2);
+    return *this;
 }
 
-bool SimpleDomino::operator == (const SimpleDomino& domToCompare) const {
-	if ((domToCompare.getVal1() == value1 && domToCompare.getVal2() == value2) ||
-		(domToCompare.getVal1() == value2 && domToCompare.getVal2() == value1)) {
-		return true;
-	}
-	else {
-		return false;
-	}
+bool SimpleDomino::operator==(const SimpleDomino& domToCompare) const {
+    return (value1 == domToCompare.value1 && value2 == domToCompare.value2) ||
+        (value1 == domToCompare.value2 && value2 == domToCompare.value1);
 }
 
 int SimpleDomino::getVal1() const {
-	return value1;
+    return value1;
 }
 
 int SimpleDomino::getVal2() const {
-	return value2;
+    return value2;
 }
 
 void SimpleDomino::setVal1(int v) {
-	if (v < 0 || v > 6) throw out_of_range("Value must be 0 < x <= 6");
-	value1 = v;
+    if (v < 1 || v > 6) throw out_of_range("Value must be between 1 and 6");
+    value1 = v;
 }
 
 void SimpleDomino::setVal2(int v) {
-	if (v < 0 || v > 6) throw out_of_range("Value must be 0 < x <= 6");
-	value2 = v;
+    if (v < 1 || v > 6) throw out_of_range("Value must be between 1 and 6");
+    value2 = v;
 }
 
 void SimpleDomino::print() {
-	cout << value1 << "and" << value2 << endl;
+    cout << value1 << " and " << value2 << endl;
 }
 
 string SimpleDomino::drawHalf(int value) const {
-	switch (value) {
-	case 0:
-		return "     \n"
-			"     \n"
-			"     \n";
-	case 1:
-		return "     \n"
-			"  •  \n"
-			"     \n";
-	case 2:
-		return "•    \n"
-			"     \n"
-			"    •\n";
-	case 3:
-		return "•    \n"
-			"  •  \n"
-			"    •\n";
-	case 4:
-		return "•   •\n"
-			"     \n"
-			"•   •\n";
-	case 5:
-		return "•   •\n"
-			"  •  \n"
-			"•   •\n";
-	case 6:
-		return "•   •\n"
-			"•   •\n"
-			"•   •\n";
-	default:
-		return "     \n"
-			"  ?  \n"
-			"     \n";
-	}
+    switch (value) {
+    case 0:
+        return "     \n"
+            "     \n"
+            "     \n";
+    case 1:
+        return "     \n"
+            "  •  \n"
+            "     \n";
+    case 2:
+        return "•    \n"
+            "     \n"
+            "    •\n";
+    case 3:
+        return "•    \n"
+            "  •  \n"
+            "    •\n";
+    case 4:
+        return "•   •\n"
+            "     \n"
+            "•   •\n";
+    case 5:
+        return "•   •\n"
+            "  •  \n"
+            "•   •\n";
+    case 6:
+        return "•   •\n"
+            "•   •\n"
+            "•   •\n";
+    default:
+        return "     \n"
+            "  ?  \n"
+            "     \n";
+    }
 }
 
 string SimpleDomino::ascii() const {
-	vector<string> leftLines;
-	vector<string> rightLines;
+    string leftHalf = drawHalf(value1);
+    string rightHalf = drawHalf(value2);
 
-	string leftHalf = drawHalf(value1);
-	string rightHalf = drawHalf(value2);
+    string result;
+    result += to_string(value1) + " " + to_string(value2) + "\n";
+    result += "┌─────┬─────┐\n";
 
-	size_t pos = 0;
-	while (pos < leftHalf.length()) {
-		size_t newPos = leftHalf.find('\n', pos);
-		if (newPos == string::npos) break;
-		leftLines.push_back(leftHalf.substr(pos, newPos - pos));
-		pos = newPos + 1;
-	}
+    size_t pos = 0;
+    for (int i = 0; i < 3; ++i) {
+        size_t leftEnd = leftHalf.find('\n', pos);
+        size_t rightEnd = rightHalf.find('\n', pos);
 
-	pos = 0;
-	while (pos < rightHalf.length()) {
-		size_t newPos = rightHalf.find('\n', pos);
-		if (newPos == string::npos) break;
-		rightLines.push_back(rightHalf.substr(pos, newPos - pos));
-		pos = newPos + 1;
-	}
+        string leftLine = leftHalf.substr(pos, leftEnd - pos);
+        string rightLine = rightHalf.substr(pos, rightEnd - pos);
 
-	string result;
-	result += to_string(value1) + " " + to_string(value2) + "\n";
-	result += "┌─────┬─────┐\n";
+        result += "│" + leftLine + "│" + rightLine + "│\n";
+        pos = leftEnd + 1;
+    }
 
-	for (size_t i = 0; i < leftLines.size(); ++i) {
-		result += "│" + leftLines[i] + "│" + rightLines[i] + "│\n";
-	}
-
-	result += "└─────┴─────┘\n";
-
-	return result;
+    result += "└─────┴─────┘\n";
+    return result;
 }
 
 ostream& operator<<(ostream& os, const SimpleDomino& dom) {
-	os << "Current state:\n" << "LeftValue = " << dom.value1 << "\n" << "RightValue = " << dom.value2 << endl;
-	return os;
+    os << "Current state:\n" << "LeftValue = " << dom.value1 << "\n" << "RightValue = " << dom.value2 << endl;
+    return os;
 }
 
 istream& operator>>(istream& is, SimpleDomino& dom) {
-	int val1, val2;
-	is >> val1;
-	is >> val2;
-	dom.setVal1(val1);
-	dom.setVal2(val2);
-	return is;
+    int val1, val2;
+    is >> val1 >> val2;
+
+    int oldVal1 = dom.value1;
+    int oldVal2 = dom.value2;
+
+    try {
+        dom.setVal1(val1);
+        dom.setVal2(val2);
+    }
+    catch (const out_of_range& e) {
+        dom.value1 = oldVal1;
+        dom.value2 = oldVal2;
+        throw;
+    }
+
+    return is;
 }
 
 bool SimpleDomino::operator<(const SimpleDomino& dom) const {
-	int sum1 = value1 + value2;
-	int sum2 = dom.getVal1() + dom.getVal2();
-	return sum1 < sum2;
+    int sum1 = value1 + value2;
+    int sum2 = dom.value1 + dom.value2;
+    return sum1 < sum2;
 }

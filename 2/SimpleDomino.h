@@ -22,7 +22,7 @@ private:
 
 public:
     /**
-     * @brief Constructs a new SimpleDomino object
+     * @brief Default constructor
      * @param val1 First value of the domino (default: 1)
      * @param val2 Second value of the domino (default: 1)
      * @param rnd If true, creates domino with random values (default: false)
@@ -69,7 +69,7 @@ public:
      * @brief Flips the domino (swaps the two values)
      * @return Reference to the flipped domino
      */
-    SimpleDomino operator~();
+    SimpleDomino& operator~();
 
     /**
      * @brief Compares two dominoes for equality
@@ -116,7 +116,7 @@ public:
 private:
     /**
      * @brief Draws one half of the domino for ASCII art
-     * @param value Value to draw (0-6)
+     * @param value Value to draw (1-6)
      * @return String representation of the domino half
      */
     std::string drawHalf(int value) const;
