@@ -242,3 +242,7 @@ string ComplexDomino::ascii(int index) {
     }
     return arr[index].ascii();
 }
+
+ComplexDomino& ComplexDomino::operator++(int) {
+    *this += SimpleDomino(1, 1, true);
+}

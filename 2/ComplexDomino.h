@@ -162,6 +162,7 @@ public:
      * @throws std::out_of_range if index is invalid
      */
     std::string ascii(int index);
+    ComplexDomino& operator++(int);
 };
 
 #endif
